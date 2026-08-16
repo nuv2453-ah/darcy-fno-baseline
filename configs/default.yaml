@@ -1,0 +1,38 @@
+# Fixed experimental protocol for the 2D Darcy flow FNO baseline.
+# This file is the single source of truth for the run — don't change values
+# after seeing results without noting it explicitly in the brief.
+
+data:
+  n_train: 1000
+  n_tests: [200]          # test set size at each test resolution
+  train_resolution: 16     # fixed by the small Darcy dataset loader
+  test_resolutions: [16, 32]  # 16 = in-distribution, 32 = resolution generalization
+  batch_size: 32
+  test_batch_sizes: [32]
+
+model:
+  name: FNO
+  n_modes: [16, 16]
+  hidden_channels: 32
+  n_layers: 4
+  in_channels: 1
+  out_channels: 1
+
+train:
+  n_epochs: 50
+  learning_rate: 1.0e-3
+  weight_decay: 1.0e-4
+  scheduler: StepLR
+  scheduler_step_size: 30
+  scheduler_gamma: 0.5
+  seed: 0
+  n_seeds: 3   # rerun with seeds 0,1,2 to report variance
+
+metrics:
+  primary: relative_l2
+  secondary: resolution_generalization_gap   # error@32 - error@16
+
+thresholds:
+  success_relative_l2: 0.05    # < 5% relative L2 error on in-distribution test = pass
+  failure_relative_l2: 0.15    # > 15% = fail
+  # between the two = inconclusive, see brief for full definition
