@@ -1,0 +1,25 @@
+{
+  "protocol": "matched_test_n50_successor_v1",
+  "training_config_unchanged": true,
+  "training_reused_retained_checkpoints": true,
+  "test_samples_per_resolution": 50,
+  "per_seed": {
+    "0": {
+      "16_l2": 0.1295851171016693,
+      "32_l2": 0.18418940901756287
+    },
+    "1": {
+      "16_l2": 0.11327585577964783,
+      "32_l2": 0.19324037432670593
+    },
+    "2": {
+      "16_l2": 0.10157766193151474,
+      "32_l2": 0.167795330286026
+    }
+  },
+  "aggregate": {
+    "mean_relative_l2_res16": 0.11481287827094395,
+    "mean_relative_l2_res32": 0.1817417045434316,
+    "resolution_gap": 0.06692882627248765
+  }
+}
