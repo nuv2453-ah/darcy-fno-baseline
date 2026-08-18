@@ -68,12 +68,14 @@ The original verdict remains **INCONCLUSIVE** under the predeclared rule:
 success requires mean in-distribution relative L2 below 0.05; failure is
 above 0.15; and high seed variance is separately inconclusive.
 
-## Matched-count successor control
+## Post-hoc exploratory matched-count control
 
 `src/matched_eval.py` defines `matched_test_n50_successor_v1`. It reuses the
 retained checkpoints, unchanged training configuration, unchanged model, and
 the exact `Trainer`/`LpLoss` evaluation path, while evaluating 50 examples at
-both resolutions. It does not overwrite the original JSON files.
+both resolutions. It does not overwrite the original JSON files. This control
+was executed after the original 50-vs-200 outcome was known, so it is
+post-hoc exploratory evidence, not a pre-registered confirmatory successor.
 
 Command:
 
@@ -104,6 +106,8 @@ The matched-control JSON has SHA-256:
 4b3a29d9e34a61eb7818777b7f6e6c5f51e7f59f8bab77d6c76b76b480fb1a80  outputs/matched_control_v1.json
 ```
 
-Any future 200-vs-200 run must be a separately versioned successor protocol.
-The hypothesis, metrics, and decision rule stay fixed unless a change is
-explicitly justified and declared before that run.
+Any future 200-vs-200 run or revised cross-resolution transfer criterion must
+be a separately versioned confirmatory successor protocol, with data
+cardinalities/provenance, hypothesis, metrics, and decision rule frozen before
+execution. The original v1 and this exploratory control remain immutable
+evidence packages.

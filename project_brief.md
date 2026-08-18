@@ -2,7 +2,7 @@
 
 **Track:** Physics-Informed AI & Neural Operators
 **Lead:** Nuv Ahuja
-**Status:** Baseline scaffolded, first training run pending
+**Status:** Frozen original v1 completed; post-hoc matched-count control retained
 
 ## Research Question
 
@@ -58,12 +58,29 @@ Fourier Neural Operator (FNO), via the official `neuraloperator` library
 
 - **Source:** Small Darcy flow dataset bundled with `neuraloperator`
   (Zenodo-hosted, same data as the original FNO paper).
-- **Split:** 1000 train / 200 test @ 16×16 (in-distribution) / 200 test
-  @ 32×32 (resolution-generalization, zero-shot).
+- **Declared split:** 1000 train / 200 test @ 16×16 (in-distribution) /
+  200 test @ 32×32 (resolution-generalization, zero-shot).
+- **Observed frozen v1 split:** 1000 train / 50 test @ 16×16 /
+  200 test @ 32×32. The 16×16 source test file contains only 50 examples;
+  the original v1 result and its hashes are preserved unchanged.
 - **Seeds:** 3 runs (seeds 0, 1, 2) to report variance, not a single
   cherry-picked run.
 - Full details are pinned in `configs/default.yaml` and fixed *before*
   the main run.
+
+## Protocol history
+
+- **Frozen original v1:** trained and evaluated with the observed 50 samples
+  at 16×16 and 200 samples at 32×32; verdict **INCONCLUSIVE**.
+- **Post-hoc exploratory matched-count control**
+  (`matched_test_n50_successor_v1`): evaluated the retained checkpoints on
+  50 samples at each resolution, with no retraining. It was run after the
+  original 50-vs-200 outcome was known, so it is not pre-registered or
+  confirmatory evidence. Its JSON and hash are retained unchanged.
+- **Future confirmatory work:** any 200-vs-200 evaluation or revised
+  cross-resolution transfer criterion must be separately versioned, with the
+  hypothesis, metrics, data cardinalities/provenance, and decision rule
+  frozen before execution.
 
 ## Metrics (fixed before the main run)
 
