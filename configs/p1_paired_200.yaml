@@ -1,0 +1,59 @@
+# Pre-execution governance config for P1. This is not consumed by v1 train.py.
+# It is a frozen specification for the separately versioned confirmatory run.
+
+protocol:
+  id: p1_paired_200_constructed_resolution
+  status: pre_execution_frozen_pending_review
+  parent_evidence_commit: 5c81e262624acd2b77a25bc15500d3b476840a19
+  outcome_runs_authorized: false
+
+data:
+  source: Zenodo record 12784353 via neuraloperator==2.0.0
+  test_file: darcy_test_32.pt
+  test_file_sha256: f9fbe30065908327f132425d760d573ed7ce29cb2a54cfdb3fcefd3d80d7ac83
+  source_test_shape: [1000, 32, 32]
+  train_file: darcy_train_16.pt
+  train_samples: 1000
+  paired_test_indices: [200, 400] # Python half-open range; disjoint from v1
+  test_samples_per_resolution: 200
+  resolutions: [16, 32]
+  res16_construction:
+    source: selected 32x32 x/y fields
+    operation: torch.nn.functional.interpolate
+    mode: bilinear
+    align_corners: false
+    antialias: false
+
+model_and_training:
+  source_config: configs/default.yaml
+  architecture: FNO, 4 layers, 32 hidden channels, 16 modes per dimension
+  optimizer: AdamW, lr=1.0e-3, weight_decay=1.0e-4
+  scheduler: StepLR, step_size=30, gamma=0.5
+  epochs: 50
+  seeds: [0, 1, 2]
+  device_policy: CPU only; MPS is excluded because v1 produced NaN losses
+
+metrics_and_decision_rule:
+  per_sample_metric: relative L2
+  seed_metric: mean per-sample relative L2 over 200 paired examples
+  aggregate: mean and sample standard deviation across seeds
+  primary_metric: mean_relative_l2_res16
+  secondary_metrics: [mean_relative_l2_res32, resolution_gap_res32_minus_res16]
+  success:
+    - mean_relative_l2_res16 < 0.05
+    - resolution_gap_res32_minus_res16 <= 0.05
+    - std_relative_l2_res16 <= 0.30 * mean_relative_l2_res16
+  failure:
+    - mean_relative_l2_res16 > 0.15
+    - resolution_gap_res32_minus_res16 > 0.10
+  inconclusive: all other outcomes
+
+artifacts:
+  output_directory: outputs/p1_paired_200/
+  required_files:
+    - protocol_manifest.json
+    - results_seed0.json
+    - results_seed1.json
+    - results_seed2.json
+    - aggregate.json
+    - sha256sums.txt
